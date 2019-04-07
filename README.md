@@ -1,2 +1,2 @@
-# Multi-modal Fetch Environments
+# Multimodal Fetch Environments
 
