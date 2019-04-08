@@ -1,6 +1,7 @@
 """
 Adapted from OpenAI Baselines
 https://github.com/openai/baselines/blob/master/baselines/common/atari_wrappers.py
+https://github.com/ikostrikov/pytorch-a2c-ppo-acktr-gail/blob/master/a2c_ppo_acktr/envs.py
 """
 import os
 import copy
@@ -28,13 +29,14 @@ def make_env(env_id, seed, rank, log_dir, allow_early_resets):
         return env
     return _thunk
 
-def make_fetch_env(env_id, num_processes, seed, log_dir, allow_early_resets, device=None):
+def make_fetch_env(env_id, num_processes, seed, log_dir, allow_early_resets, wrap_pytorch=False, device=None):
     envs = [make_env(env_id, seed, rank, log_dir, allow_early_resets) for rank in range(num_processes)]
     if num_processes == 1:
         envs = DummyVecEnv(envs)
     else:
         envs = ShmemVecEnv(envs)
-    envs = VecEnvPyTorch(envs, device)
+    if wrap_pytorch:
+        envs = VecEnvPyTorch(envs, device)
     return VecMonitor(envs, max_history=50)
 
 
@@ -47,6 +49,13 @@ class VecEnvPyTorch(VecEnvWrapper):
             self.device=torch.device('cuda')
         observation_space = self.venv.observation_space
         VecEnvWrapper.__init__(self, venv, observation_space=observation_space)
+
+    def step_async(self, actions):
+        if isinstance(actions, torch.LongTensor):
+            # Squeeze the dimension for discrete actions
+            actions = actions.squeeze(1)
+        actions = actions.cpu().numpy()
+        self.venv.step_async(actions)
 
     def step_wait(self):
         obs, rews, news, infos = self.venv.step_wait()
