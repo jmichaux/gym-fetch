@@ -64,7 +64,7 @@ def make_env(env_id, seed, rank, log_dir, allow_early_resets):
         if log_dir is not None:
             env = bench.Monitor(
                 env,
-                os.path.join(log_dir, str(rank)),
+                os.path.join(log_dir +'/monitor', str(rank)),
                 allow_early_resets=allow_early_resets)
 
         if is_atari:
