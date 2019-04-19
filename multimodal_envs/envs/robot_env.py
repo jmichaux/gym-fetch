@@ -62,7 +62,8 @@ class RobotEnv(gym.GoalEnv):
         self.sim.step()
         self._step_callback()
         obs = self._get_obs()
-        info = self._get_other_obs()
+        info = {}
+        # info = self._get_other_obs()
         info['is_success'] = self._is_success(obs['achieved_goal'], self.goal)
         done = False
         reward = self.compute_reward(obs['achieved_goal'], self.goal, info)
@@ -76,10 +77,16 @@ class RobotEnv(gym.GoalEnv):
         # configuration.
         did_reset_sim = False
         while not did_reset_sim:
+            # Randomize start position of object.
             did_reset_sim = self._reset_sim()
         self.goal = self._sample_goal().copy()
         obs = self._get_obs()
+        while np.linalg.norm(obs['achieved_goal'] - obs['desired_goal']) <= self.distance_threshold:
+            self.goal = self._sample_goal().copy()
+            obs = self._get_obs()
         return obs
+
+
 
     def close(self):
         if self.viewer is not None:
