@@ -81,7 +81,7 @@ class RobotEnv(gym.GoalEnv):
             did_reset_sim = self._reset_sim()
         self.goal = self._sample_goal().copy()
         obs = self._get_obs()
-        while np.linalg.norm(obs['achieved_goal'] - obs['desired_goal']) <= self.distance_threshold:
+        while np.linalg.norm(obs['achieved_goal'] - obs['desired_goal']) <= 2 * self.distance_threshold:
             self.goal = self._sample_goal().copy()
             obs = self._get_obs()
         return obs
