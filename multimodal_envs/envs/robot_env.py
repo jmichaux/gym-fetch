@@ -78,7 +78,7 @@ class RobotEnv(gym.GoalEnv):
         elif self.terminate_fail and not self.terminate_success:
             done = self._failed(obs)
         # terminate on successes and failures
-            print('terminate on successes and failures')
+        else:
             if info['is_success']:
                 done = True
             else:
