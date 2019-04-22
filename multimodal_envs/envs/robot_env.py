@@ -65,39 +65,24 @@ class RobotEnv(gym.GoalEnv):
         info = {}
         # info = self._get_other_obs()
         info['is_success'] = self._is_success(obs['achieved_goal'], self.goal)
-        if info['is_success']:
-            done = True
-        else:
-            if "Push" in self.spec.id:
-                if obs['achieved_goal'][0] < 1.04 or obs['achieved_goal'][0] > 1.55:
-                    done = True
-                elif obs['achieved_goal'][1] < 0.37 or obs['achieved_goal'][1] > 1.35:
-                    done = True
-                elif obs['achieved_goal'][2] < 0.35:
-                    done = True
-                else:
-                    done = False
-            elif "PickAndPlace" in self.spec.id:
-                if obs['achieved_goal'][0] < 1.04 or obs['achieved_goal'][0] > 1.55:
-                    done = True
-                elif obs['achieved_goal'][1] < 0.37 or obs['achieved_goal'][1] > 1.35:
-                    done = True
-                elif obs['achieved_goal'][2] < 0.35:
-                    done = True
-                else:
-                    done = False
-            elif "Slide" in self.spec.id:
-                # TODO: Fix these numbers for the sliding task
-                if obs['achieved_goal'][0] < 1.04 or obs['achieved_goal'][0] > 1.55:
-                    done = True
-                elif obs['achieved_goal'][1] < 0.37 or obs['achieved_goal'][1] > 1.35:
-                    done = True
-                elif obs['achieved_goal'][2] < 0.35:
-                    done = True
-                else:
-                    done = False
+        # never terminate
+        if not self.terminate_success and not self.terminate_fail:
+            done = False
+        # only terminate if successfuly reach goal
+        elif self.terminate_success and not self.terminate_fail:
+            if info['is_success']:
+                done = True
             else:
                 done = False
+        # only terminate on failures
+        elif self.terminate_fail and not self.terminate_success:
+            done = self._failed(obs)
+        # terminate on successes and failures
+            print('terminate on successes and failures')
+            if info['is_success']:
+                done = True
+            else:
+                done = self._failed(obs)
         reward = self.compute_reward(obs['achieved_goal'], self.goal, info)
         return obs, reward, done, info
 
