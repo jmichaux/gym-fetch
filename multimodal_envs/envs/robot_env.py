@@ -67,6 +67,12 @@ class RobotEnv(gym.GoalEnv):
         info['is_success'] = self._is_success(obs['achieved_goal'], self.goal)
         if info['is_success']:
             done = True
+        elif obs['achieved_goal'][0] < 1.04 or obs['achieved_goal'][0] > 1.55:
+            done = True
+        elif obs['achieved_goal'][1] < 0.37 or obs['achieved_goal'][1] > 1.35:
+            done = True
+        elif obs['achieved_goal'][2] < 0.35:
+            done = True
         else:
             done = False
         reward = self.compute_reward(obs['achieved_goal'], self.goal, info)
