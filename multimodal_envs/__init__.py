@@ -8,35 +8,39 @@ for reward_type in ['dense', 'sparse', 'very_sparse']:
         suffix = 'Sparse'
     else:
         suffix = 'VerySparse'
-    kwargs = {
-        'reward_type': reward_type,
-    }
 
-    # Fetch
-    register(
-        id='FetchSlide{}-v2'.format(suffix),
-        entry_point='multimodal_envs.envs:FetchSlideEnv',
-        kwargs=kwargs,
-        max_episode_steps=50,
-    )
+    for i, terminate_condition in enumerate([[False, False], [True, False], [False, True], [True, True]]):
+        kwargs = {
+            'reward_type': reward_type,
+            'terminate_success': terminate_condition[0],
+            'terminate_fail': terminate_condition[1],
+            }
 
-    register(
-        id='FetchPickAndPlace{}-v2'.format(suffix),
-        entry_point='multimodal_envs.envs:FetchPickAndPlaceEnv',
-        kwargs=kwargs,
-        max_episode_steps=50,
-    )
+        # Fetch
+        register(
+            id='FetchSlide{}-v{}'.format(suffix, i + 2),
+            entry_point='multimodal_envs.envs:FetchSlideEnv',
+            kwargs=kwargs,
+            max_episode_steps=50,
+        )
 
-    register(
-        id='FetchReach{}-v2'.format(suffix),
-        entry_point='multimodal_envs.envs:FetchReachEnv',
-        kwargs=kwargs,
-        max_episode_steps=50,
-    )
+        register(
+            id='FetchPickAndPlace{}-v{}'.format(suffix, i + 2),
+            entry_point='multimodal_envs.envs:FetchPickAndPlaceEnv',
+            kwargs=kwargs,
+            max_episode_steps=50,
+        )
 
-    register(
-        id='FetchPush{}-v2'.format(suffix),
-        entry_point='multimodal_envs.envs:FetchPushEnv',
-        kwargs=kwargs,
-        max_episode_steps=50,
-    )
+        register(
+            id='FetchReach{}-v{}'.format(suffix, i + 2),
+            entry_point='multimodal_envs.envs:FetchReachEnv',
+            kwargs=kwargs,
+            max_episode_steps=50,
+        )
+
+        register(
+            id='FetchPush{}-v{}'.format(suffix, i + 2),
+            entry_point='multimodal_envs.envs:FetchPushEnv',
+            kwargs=kwargs,
+            max_episode_steps=50,
+        )
