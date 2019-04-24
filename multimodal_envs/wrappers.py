@@ -190,7 +190,7 @@ class VecPyTorch(VecEnvWrapper):
 
     def reset(self):
         obs = self.venv.reset()
-        obs = torch.from_numpy(obs).float().to(self.device)
+        obs = [torch.from_numpy(ob).float().to(self.device) for ob in obs]
         return obs
 
     def step_async(self, actions):
@@ -202,7 +202,10 @@ class VecPyTorch(VecEnvWrapper):
 
     def step_wait(self):
         obs, reward, done, info = self.venv.step_wait()
-        obs = torch.from_numpy(obs).float().to(self.device)
+        # try:
+        #     obs = torch.from_numpy(obs).float().to(self.device)
+        # except:
+        obs = [torch.from_numpy(ob).float().to(self.device) for ob in obs]
         reward = torch.from_numpy(reward).unsqueeze(dim=1).float()
         return obs, reward, done, info
 
@@ -220,7 +223,9 @@ class VecNormalize(VecNormalize_):
             obs = np.clip((obs - self.ob_rms.mean) /
                           np.sqrt(self.ob_rms.var + self.epsilon),
                           -self.clipob, self.clipob)
-            return np.array((obs_original, obs))
+            mean = self.ob_rms.mean.reshape((1, len(self.ob_rms.mean)))
+            var = self.ob_rms.var.reshape((1, len(self.ob_rms.mean)))
+            return np.array([obs_original, obs, mean, var])
         else:
             return obs
 
