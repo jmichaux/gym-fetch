@@ -186,8 +186,9 @@ class FetchEnv(robot_env.RobotEnv):
         # Randomize start position of object.
         if self.has_object:
             object_xpos = self.initial_gripper_xpos[:2]
-            while np.linalg.norm(object_xpos - self.initial_gripper_xpos[:2]) < 0.1:
-                object_xpos = self.initial_gripper_xpos[:2] + self.np_random.uniform(-self.obj_range, self.obj_range, size=2)
+            object_xpos = np.array([1.2, 1.14])
+            # while np.linalg.norm(object_xpos - self.initial_gripper_xpos[:2]) < 0.1:
+            #     object_xpos = self.initial_gripper_xpos[:2] + self.np_random.uniform(-self.obj_range, self.obj_range, size=2)
             object_qpos = self.sim.data.get_joint_qpos('object0:joint')
             assert object_qpos.shape == (7,)
             object_qpos[:2] = object_xpos
@@ -232,36 +233,3 @@ class FetchEnv(robot_env.RobotEnv):
 
     def render(self, mode='human', width=500, height=500):
         return super(FetchEnv, self).render(mode, width, height)
-
-    def _failed(self, obs):
-        if "Push" in self.spec.id:
-            if obs['achieved_goal'][0] < 1.04 or obs['achieved_goal'][0] > 1.55:
-                done = True
-            elif obs['achieved_goal'][1] < 0.37 or obs['achieved_goal'][1] > 1.35:
-                done = True
-            elif obs['achieved_goal'][2] < 0.35:
-                done = True
-            else:
-                done = False
-        elif "PickAndPlace" in self.spec.id:
-            if obs['achieved_goal'][0] < 1.04 or obs['achieved_goal'][0] > 1.55:
-                done = True
-            elif obs['achieved_goal'][1] < 0.37 or obs['achieved_goal'][1] > 1.25:
-                done = True
-            elif obs['achieved_goal'][2] < 0.35:
-                done = True
-            else:
-                done = False
-        elif "Slide" in self.spec.id:
-            # TODO: Fix these numbers for the sliding task
-            if obs['achieved_goal'][0] < 0.35 or obs['achieved_goal'][0] > 2.0:
-                done = True
-            elif obs['achieved_goal'][1] < 0.3 or obs['achieved_goal'][1] > 1.35:
-                done = True
-            elif obs['achieved_goal'][2] < 0.35:
-                done = True
-            else:
-                done = False
-        else:
-            done = False
-        return done

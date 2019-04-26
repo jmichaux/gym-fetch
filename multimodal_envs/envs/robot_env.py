@@ -76,13 +76,13 @@ class RobotEnv(gym.GoalEnv):
                 done = False
         # only terminate on failures
         elif self.terminate_fail and not self.terminate_success:
-            done = self._failed(obs)
+            done = self._check_done(obs)
         # terminate on successes and failures
         else:
             if info['is_success']:
                 done = True
             else:
-                done = self._failed(obs)
+                done = self._check_done(obs)
         reward = self.compute_reward(obs['achieved_goal'], self.goal, info)
         return obs, reward, done, info
 
@@ -189,3 +189,10 @@ class RobotEnv(gym.GoalEnv):
         to enforce additional constraints on the simulation state.
         """
         pass
+
+    def _check_done(self, obs):
+        """
+        Check if agent has reached the end of the episode based on
+        environment-specific conditions (i.e. block falls of table).
+        """
+        raise NotImplementedError()
