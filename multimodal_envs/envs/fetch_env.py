@@ -246,7 +246,7 @@ class FetchEnv(robot_env.RobotEnv):
         elif "PickAndPlace" in self.spec.id:
             if obs['achieved_goal'][0] < 1.04 or obs['achieved_goal'][0] > 1.55:
                 done = True
-            elif obs['achieved_goal'][1] < 0.37 or obs['achieved_goal'][1] > 1.35:
+            elif obs['achieved_goal'][1] < 0.37 or obs['achieved_goal'][1] > 1.25:
                 done = True
             elif obs['achieved_goal'][2] < 0.35:
                 done = True
@@ -254,9 +254,9 @@ class FetchEnv(robot_env.RobotEnv):
                 done = False
         elif "Slide" in self.spec.id:
             # TODO: Fix these numbers for the sliding task
-            if obs['achieved_goal'][0] < 1.04 or obs['achieved_goal'][0] > 1.55:
+            if obs['achieved_goal'][0] < 0.35 or obs['achieved_goal'][0] > 2.0:
                 done = True
-            elif obs['achieved_goal'][1] < 0.37 or obs['achieved_goal'][1] > 1.35:
+            elif obs['achieved_goal'][1] < 0.3 or obs['achieved_goal'][1] > 1.35:
                 done = True
             elif obs['achieved_goal'][2] < 0.35:
                 done = True
