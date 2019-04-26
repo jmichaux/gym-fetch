@@ -44,3 +44,10 @@ for reward_type in ['dense', 'sparse', 'very_sparse']:
             kwargs=kwargs,
             max_episode_steps=50,
         )
+
+        register(
+            id='FetchHook{}-v{}'.format(suffix, i + 2),
+            entry_point='multimodal_envs.envs:FetchHookEnv',
+            kwargs=kwargs,
+            max_episode_steps=100,
+        )
