@@ -17,7 +17,7 @@ class FetchPushEnv(fetch_env.FetchEnv, utils.EzPickle):
             'robot0:slide0': 0.405,
             'robot0:slide1': 0.48,
             'robot0:slide2': 0.0,
-            'object0:joint': [1.25, 0.53, 0.4, 1., 0., 0., 0.],
+            'object0:joint': [1.25, 0.53, .4, 1., 0., 0., 0.],
         }
         fetch_env.FetchEnv.__init__(
             self, MODEL_XML_PATH, has_object=True, block_gripper=True, n_substeps=20,
@@ -26,3 +26,12 @@ class FetchPushEnv(fetch_env.FetchEnv, utils.EzPickle):
             initial_qpos=initial_qpos, reward_type=reward_type, terminate_success=terminate_success,
             terminate_fail=terminate_fail)
         utils.EzPickle.__init__(self)
+
+    def _check_done(self, obs):
+        if obs['achieved_goal'][0] < 1.02 or obs['achieved_goal'][0] > 1.58:
+            done = True
+        elif obs['achieved_goal'][1] < 0.37 or obs['achieved_goal'][1] > 1.125:
+            done = True
+        else:
+            done = False
+        return done

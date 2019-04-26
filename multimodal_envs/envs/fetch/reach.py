@@ -25,3 +25,6 @@ class FetchReachEnv(fetch_env.FetchEnv, utils.EzPickle):
             initial_qpos=initial_qpos, reward_type=reward_type, terminate_success=terminate_success,
             terminate_fail=terminate_fail)
         utils.EzPickle.__init__(self)
+
+    def _check_done(self, obs):
+        return False

@@ -25,3 +25,12 @@ class FetchPickAndPlaceEnv(fetch_env.FetchEnv, utils.EzPickle):
             initial_qpos=initial_qpos, reward_type=reward_type, terminate_success=terminate_success,
             terminate_fail=terminate_fail)
         utils.EzPickle.__init__(self)
+
+    def _check_done(self, obs):
+        if obs['achieved_goal'][0] < 1.02 or obs['achieved_goal'][0] > 1.58:
+            done = True
+        elif obs['achieved_goal'][1] < 0.37 or obs['achieved_goal'][1] > 1.13:
+            done = True
+        else:
+            done = False
+        return done
