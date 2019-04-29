@@ -87,11 +87,13 @@
 												<inertial diaginertia="0.1 0.1 0.1" mass="4" pos="-0.01 0 0"></inertial>
 												<joint axis="0 1 0" name="robot0:r_gripper_finger_joint" range="0 0.05"></joint>
 												<geom pos="0 -0.008 0" size="0.0385 0.007 0.0135" type="box" name="robot0:r_gripper_finger_link" material="robot0:gripper_finger_mat" condim="4" friction="1 0.05 0.01"></geom>
+												<site name="robot0:r_gripper_touch" pos="0 -0.008 0" rgba="1 0 0 1" type="box" size="0.0385 0.007 0.0135"></site>
 											</body>
 											<body childclass="robot0:fetchGripper" name="robot0:l_gripper_finger_link" pos="0 -0.0159 0">
 												<inertial diaginertia="0.1 0.1 0.1" mass="4" pos="-0.01 0 0"></inertial>
 												<joint axis="0 -1 0" name="robot0:l_gripper_finger_joint" range="0 0.05"></joint>
 												<geom pos="0 0.008 0" size="0.0385 0.007 0.0135" type="box" name="robot0:l_gripper_finger_link" material="robot0:gripper_finger_mat" condim="4" friction="1 0.05 0.01"></geom>
+												<site name="robot0:l_gripper_touch" pos="0 0.008 0" rgba="1 0 0 1" type="box" size="0.0385 0.007 0.0135"></site>
 											</body>
 											<site name="robot0:grip" pos="0.02 0 0" rgba="0 0 0 0" size="0.02 0.02 0.02"></site>
 										</body>
