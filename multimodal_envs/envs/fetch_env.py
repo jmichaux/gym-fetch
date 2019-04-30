@@ -15,7 +15,7 @@ class FetchEnv(robot_env.RobotEnv):
     def __init__(
         self, model_path, n_substeps, gripper_extra_height, block_gripper,
         has_object, target_in_the_air, target_offset, obj_range, target_range,
-        distance_threshold, initial_qpos, reward_type, terminate_success, terminate_fail
+        distance_threshold, initial_qpos, reward_type, terminate_success, terminate_fail,
     ):
         """Initializes a new Fetch environment.
 
@@ -49,6 +49,14 @@ class FetchEnv(robot_env.RobotEnv):
         self._touch_sensor_id = []
         self.touch_color = [1, 0, 0, 0.5]
         self.notouch_color = [0, 0.5, 0, 0.2]
+
+        self.obs_dict = {'robot': True,
+                         'object': True,
+                         'desired_goal': True,
+                         'achieved_goal': True,
+                         'images': False,
+                         'depth': False,
+                         'contact': False}
 
         super(FetchEnv, self).__init__(
             model_path=model_path, n_substeps=n_substeps, n_actions=4,
@@ -101,6 +109,7 @@ class FetchEnv(robot_env.RobotEnv):
         utils.mocap_set_action(self.sim, action)
 
     def _get_obs(self):
+        obs = {}
         # positions
         grip_pos = self.sim.data.get_site_xpos('robot0:grip')
         dt = self.sim.nsubsteps * self.sim.model.opt.timestep
@@ -126,28 +135,32 @@ class FetchEnv(robot_env.RobotEnv):
         else:
             achieved_goal = np.squeeze(object_pos.copy())
 
-        obs = np.concatenate([
-            grip_pos, object_pos.ravel(), object_rel_pos.ravel(), gripper_state, object_rot.ravel(),
-            object_velp.ravel(), object_velr.ravel(), grip_velp, gripper_vel,
-        ])
+        obs['achieved_goal'] = achieved_goal.copy()
+        obs['desired_goal'] = self.goal.copy()
 
-        return {
-            'observation': obs.copy(),
-            'achieved_goal': achieved_goal.copy(),
-            'desired_goal': self.goal.copy(),
-        }
+        if self.obs_dict['robot']:
+            robot = np.concatenate([grip_pos, gripper_state, grip_velp, gripper_vel])
+            obs['robot']= robot.copy()
 
-    def _get_other_obs(self):
-        # RGB-D
-        im0, d0 = self.sim.render(width=500, height=500, camera_name='external_camera_0', depth=True)
-        im1, d1 = self.sim.render(width=500, height=500, camera_name='external_camera_1', depth=True)
-        im2, d2 = self.sim.render(width=500, height=500, camera_name='external_camera_2', depth=True)
+        if self.obs_dict['objects']:
+            object = np.concatenate([
+                object_pos.ravel(), object_rel_pos.ravel(), object_rot.ravel(),
+                object_velp.ravel(), object_velr.ravel()])
+            obs['object'] = object.copy()
 
-        # touch sensor data
-        contact_data = self.sim.data.sensordata[self._touch_sensor_id]
+        if self.obs_dict['images'] or self.obs_dict['depth']:
+            images, depth = self._get_images(depth=True)
+            if self.obs_dict['images']:
+                obs['images'] = images.copy()
+            if self.obs_dict['depth']:
+                obs['depth'] = depth.copy()
 
-        # removing the red target
-        # TODO: Move this to render callback
+        if self.obs_dict['contact']:
+            obs['contact'] = self._get_contact()
+        return obs
+
+    def _get_images(self, depth=False):
+        # remove red target pixels
         name = 'target0'
         target_geom_ids = [self.sim.model.geom_name2id(name)
                            for name in self.sim.model.geom_names if name.startswith('target')]
@@ -159,14 +172,17 @@ class FetchEnv(robot_env.RobotEnv):
         self.sim.model.geom_rgba[target_geom_ids, -1] = 0
         self.sim.model.site_rgba[target_site_ids, -1] = 0
 
-        return {
-            'image0': im0[::-1, :, :].copy(),
-            'image1': im1[::-1, :, :].copy(),
-            'image2': im2[::-1, :, :].copy(),
-            'depth1': d1[::-1].copy(),
-            'depth2': d2[::-1].copy(),
-            'contact': sensor_data.copy(),
-        }
+        # images/depth
+        im0, d0 = self.sim.render(width=500, height=500, camera_name='external_camera_0', depth=True)
+        im1, d1 = self.sim.render(width=500, height=500, camera_name='external_camera_1', depth=True)
+        im2, d2 = self.sim.render(width=500, height=500, camera_name='external_camera_2', depth=True)
+
+        if depth:
+            return np.array([im0, im1, im2]), np.array([d0, d1, d2])
+        return np.array([im0, im1, im2])
+
+    def _get_contact(self):
+        return self.sim.data.sensordata[self._touch_sensor_id]
 
     def _viewer_setup(self):
         body_id = self.sim.model.body_name2id('robot0:gripper_link')

@@ -39,11 +39,14 @@ class RobotEnv(gym.GoalEnv):
         self.goal = self._sample_goal()
         obs = self._get_obs()
         self.action_space = spaces.Box(-1., 1., shape=(n_actions,), dtype='float32')
-        self.observation_space = spaces.Dict(dict(
-            desired_goal=spaces.Box(-np.inf, np.inf, shape=obs['achieved_goal'].shape, dtype='float32'),
-            achieved_goal=spaces.Box(-np.inf, np.inf, shape=obs['achieved_goal'].shape, dtype='float32'),
-            observation=spaces.Box(-np.inf, np.inf, shape=obs['observation'].shape, dtype='float32'),
-        ))
+
+        self.observation_space = spaces.Dict(dict((key, spaces.Box(-np.inf, np.inf), shape=val.shape, dtype='float32') for (key, val) in obs))
+
+        # self.observation_space = spaces.Dict(dict(
+        #     desired_goal=spaces.Box(-np.inf, np.inf, shape=obs['achieved_goal'].shape, dtype='float32'),
+        #     achieved_goal=spaces.Box(-np.inf, np.inf, shape=obs['achieved_goal'].shape, dtype='float32'),
+        #     observation=spaces.Box(-np.inf, np.inf, shape=obs['state'].shape, dtype='float32'),
+        # ))
 
     @property
     def dt(self):
@@ -63,7 +66,6 @@ class RobotEnv(gym.GoalEnv):
         self._step_callback()
         obs = self._get_obs()
         info = {}
-        # info = self._get_other_obs()
         info['is_success'] = self._is_success(obs['achieved_goal'], self.goal)
         # never terminate
         if not self.terminate_success and not self.terminate_fail:

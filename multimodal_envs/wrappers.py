@@ -131,6 +131,47 @@ def make_vec_envs(env_id,
     return envs
 
 
+class MultiModalObservation(gym.ObservationWrapper):
+    def __init__(self,
+                 robot=True,
+                 object=True,
+                 desired_goal=True,
+                 achieved_goal=True,
+                 images=False,
+                 depth=False,
+                 contact=False):
+
+        self.obs_dict = {'robot': robot,
+                         'object': object,
+                         'desired_goal': desired_goal,
+                         'achieved_goal': achieved_goal,
+                         'images': images,
+                         'depth': dept,
+                         'contact': contact}
+
+        self.observation_space = spaces.Dict(dict(
+            desired_goal=spaces.Box(-np.inf, np.inf, shape=obs['achieved_goal'].shape, dtype='float32'),
+            achieved_goal=spaces.Box(-np.inf, np.inf, shape=obs['achieved_goal'].shape, dtype='float32'),
+            observation=spaces.Box(-np.inf, np.inf, shape=obs['state'].shape, dtype='float32'),
+        ))
+
+    def observation(self, observation_keys):
+        assert
+
+# class ObservationWrapper(Wrapper):
+#     def step(self, action):
+#         observation, reward, done, info = self.env.step(action)
+#         return self.observation(observation), reward, done, info
+#
+#     def reset(self, **kwargs):
+#         observation = self.env.reset(**kwargs)
+#         return self.observation(observation)
+#
+#     def observation(self, observation):
+#         deprecated_warn_once("%s doesn't implement 'observation' method. Maybe it implements deprecated '_observation' method." % type(self))
+#         return self._observation(observation)
+
+
 # Checks whether done was caused my timit limits or not
 class TimeLimitMask(gym.Wrapper):
     def step(self, action):
