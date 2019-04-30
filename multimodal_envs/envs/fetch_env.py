@@ -1,5 +1,5 @@
 import numpy as np
-
+import mujoco_py
 from multimodal_envs.envs import rotations, robot_env, utils
 
 
@@ -45,9 +45,18 @@ class FetchEnv(robot_env.RobotEnv):
         self.terminate_success = terminate_success
         self.terminate_fail = terminate_fail
 
+        self._touch_sensor_id_site_id = []
+        self._touch_sensor_id = []
+        self.touch_color = [1, 0, 0, 0.5]
+        self.notouch_color = [0, 0.5, 0, 0.2]
+
         super(FetchEnv, self).__init__(
             model_path=model_path, n_substeps=n_substeps, n_actions=4,
             initial_qpos=initial_qpos)
+
+        for k, v in self.sim.model._sensor_name2id.items():
+            self._touch_sensor_id_site_id.append((v, self.sim.model._site_name2id[k]))
+            self._touch_sensor_id.append(v)
 
     # GoalEnv methods
     # ----------------------------
@@ -116,6 +125,8 @@ class FetchEnv(robot_env.RobotEnv):
             achieved_goal = grip_pos.copy()
         else:
             achieved_goal = np.squeeze(object_pos.copy())
+            contact_data = self.sim.data.sensordata[self._touch_sensor_id]
+
         obs = np.concatenate([
             grip_pos, object_pos.ravel(), object_rel_pos.ravel(), gripper_state, object_rot.ravel(),
             object_velp.ravel(), object_velr.ravel(), grip_velp, gripper_vel,
@@ -125,6 +136,7 @@ class FetchEnv(robot_env.RobotEnv):
             'observation': obs.copy(),
             'achieved_goal': achieved_goal.copy(),
             'desired_goal': self.goal.copy(),
+            'contact_data': contact_data.copy()
         }
 
     def _get_other_obs(self):
@@ -133,26 +145,21 @@ class FetchEnv(robot_env.RobotEnv):
         im1, d1 = self.sim.render(width=500, height=500, camera_name='external_camera_1', depth=True)
         im2, d2 = self.sim.render(width=500, height=500, camera_name='external_camera_2', depth=True)
 
-        # assuming the target site has a name with prefix "target". you can find it out in sim.
-        # name = 'target0'
-        # target_geom_ids = [self.sim.model.geom_name2id(name)
-        #                    for name in self.sim.model.geom_names if name.startswith('target')]
-        # target_mat_ids = [self.sim.model.geom_matid[gid] for gid in target_geom_ids]
-        # target_site_ids = [self.sim.model.site_name2id(name)
-        #                    for name in self.sim.model.site_names if name.startswith('target')]
-        #
-        # self.sim.model.mat_rgba[target_mat_ids, -1] = 0
-        # self.sim.model.geom_rgba[target_geom_ids, -1] = 0
-        # self.sim.model.site_rgba[target_site_ids, -1] = 0
+        # touch sensor data
+        contact_data = self.sim.data.sensordata[self._touch_sensor_id]
 
-        # print(self.sim.data.get_site_xpos('robot0:grip') - self.sim.data.get_body_xpos('robot0:base_link'))
-        # contacts
-        # for i in range(self.sim.data.ncon):
-        #     contact = sim.data.contact[i]
-        #     print('contact', i)
-        #     # print('dist', contact.dist)
-        #     print('geom1', contact.geom1, sim.model.geom_id2name(contact.geom1))
-        #     print('geom2', contact.geom2, sim.model.geom_id2name(contact.geom2))
+        # removing the red target
+        # TODO: Move this to render callback
+        name = 'target0'
+        target_geom_ids = [self.sim.model.geom_name2id(name)
+                           for name in self.sim.model.geom_names if name.startswith('target')]
+        target_mat_ids = [self.sim.model.geom_matid[gid] for gid in target_geom_ids]
+        target_site_ids = [self.sim.model.site_name2id(name)
+                           for name in self.sim.model.site_names if name.startswith('target')]
+
+        self.sim.model.mat_rgba[target_mat_ids, -1] = 0
+        self.sim.model.geom_rgba[target_geom_ids, -1] = 0
+        self.sim.model.site_rgba[target_site_ids, -1] = 0
 
         return {
             'image0': im0[::-1, :, :].copy(),
@@ -160,7 +167,7 @@ class FetchEnv(robot_env.RobotEnv):
             'image2': im2[::-1, :, :].copy(),
             'depth1': d1[::-1].copy(),
             'depth2': d2[::-1].copy(),
-            'contact': np.array([0., 0., 0.]), #TODO: Replace with real contact forces
+            'contact': sensor_data.copy(),
         }
 
     def _viewer_setup(self):

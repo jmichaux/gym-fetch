@@ -37,7 +37,7 @@ except ImportError:
     pass
 
 
-def make_env(env_id, seed, rank, log_dir, allow_early_resets, save_video=False):
+def make_env(env_id, seed, rank, log_dir, obs_keys=None, allow_early_resets=False, save_video=False):
     def _thunk():
         if env_id.startswith("dm"):
             _, domain, task = env_id.split('.')
@@ -45,9 +45,8 @@ def make_env(env_id, seed, rank, log_dir, allow_early_resets, save_video=False):
         else:
             env = gym.make(env_id)
 
-        # Flatten Fetch observations
-        if env_id.startswith("Fetch"):
-            env = gym.wrappers.FlattenDictWrapper(env, dict_keys=['observation', 'desired_goal'])
+        if obs_keys is not None:
+            env = gym.wrappers.FlattenDictWrapper(env, dict_keys=obs_keys)
 
         is_atari = hasattr(gym.envs, 'atari') and isinstance(
             env.unwrapped, gym.envs.atari.atari_env.AtariEnv)
@@ -102,7 +101,8 @@ def make_vec_envs(env_name,
                   gamma,
                   log_dir,
                   device,
-                  allow_early_resets,
+                  obs_keys=None,
+                  allow_early_resets=False,
                   save_video=False,
                   num_frame_stack=None):
     envs = [
