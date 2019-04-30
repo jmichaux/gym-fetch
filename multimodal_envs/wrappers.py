@@ -95,7 +95,7 @@ def make_env(env_id, seed, rank, log_dir, obs_keys=None, allow_early_resets=Fals
     return _thunk
 
 
-def make_vec_envs(env_name,
+def make_vec_envs(env_id,
                   seed,
                   num_processes,
                   gamma,
@@ -106,7 +106,7 @@ def make_vec_envs(env_name,
                   save_video=False,
                   num_frame_stack=None):
     envs = [
-        make_env(env_name, seed, i, log_dir, allow_early_resets, save_video)
+        make_env(env_id, seed, i, log_dir, allow_early_resets, save_video)
         for i in range(num_processes)
     ]
 
