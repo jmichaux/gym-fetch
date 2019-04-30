@@ -106,7 +106,7 @@ def make_vec_envs(env_id,
                   save_video=False,
                   num_frame_stack=None):
     envs = [
-        make_env(env_id, seed, i, log_dir, allow_early_resets, save_video)
+        make_env(env_id, seed, i, log_dir, obs_keys, allow_early_resets, save_video)
         for i in range(num_processes)
     ]
 
