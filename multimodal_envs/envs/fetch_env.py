@@ -126,9 +126,12 @@ class FetchEnv(robot_env.RobotEnv):
         else:
             achieved_goal = np.squeeze(object_pos.copy())
 
+        contact_data = self.sim.data.sensordata[self._touch_sensor_id]
+        if len(contact_data) == 0:
+            contact_data = np.array([0., 0.])
         obs = np.concatenate([
             grip_pos, object_pos.ravel(), object_rel_pos.ravel(), gripper_state, object_rot.ravel(),
-            object_velp.ravel(), object_velr.ravel(), grip_velp, gripper_vel,
+            object_velp.ravel(), object_velr.ravel(), grip_velp, gripper_vel, contact_data.ravel()
         ])
 
         return {
