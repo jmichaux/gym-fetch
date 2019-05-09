@@ -8,7 +8,8 @@ The dependencies for these environments include [gym](https://github.com/openai/
 
 ### Intall Fetch Robotics Environments
     git clone https://github.com/jmichaux/gym-fetch.git
-    cd baselines
+    cd gym-fetch
+    pip install -e .
 
 # Environments
 ### Reach
@@ -29,4 +30,4 @@ The dependencies for these environments include [gym](https://github.com/openai/
 [ ] Modify wrappers to better handle dictioanry observations 
 
 # Acknowledgements
-@matthiasplappert for developing the original Fetch robotics environments in OpenAI Gym. @lilianweng and @machinaut for helping me make some very important modifactions to the Fetch environments.
+[@matthiasplappert](https://github.com/matthiasplappert) for developing the original Fetch robotics environments in OpenAI Gym. [@k-r-allen](https://github.com/k-r-allen) and [@tomsilver](https://github.com/tomsilver) for making the Hook environment.  [@machinaut](https://github.com/machinaut) and [@lilianweng](https://github.com/lilianweng) for giving me advice and helping me make some very important modifactions to the Fetch environments.
