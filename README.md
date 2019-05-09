@@ -6,22 +6,11 @@ These Fetch Robotics environments were originally developed by [Matthias Plapper
 ### Dependencies
 The dependencies for these environments include [gym](https://github.com/openai/gym), [baselines](https://github.com/openai/baselines), and [mujoco-py](https://github.com/openai/mujoco-py).
 
-#### Install `gym`
-See the [OpenAI Gym repo] to ensure you have installed the dependencies for your OS. You can then install a minimal verison of gym with:
-
-.. code:: shell
-
-    pip install gym
-
-#### Install `baselines`
-Follow the link [here](https://github.com/openai/baselines) to install the `baselines` dependencies.
-
-
-### Install `mujoco-py`
-Follow the directions [here](https://github.com/openai/mujoco-py) to download the MuJoCo Physics engine
-
 ### Intall Fetch Robotics Environments
-
+    ```bash
+    git clone https://github.com/jmichaux/gym-fetch.git
+    cd baselines
+    ```
 # Environments
 ### Reach
 
