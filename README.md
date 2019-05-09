@@ -23,7 +23,8 @@ The dependencies for these environments include [gym](https://github.com/openai/
 ### Hook
 
 
-# TODO
+# To do
+This repository is stil a work in progress.  Here are a few things I plan on doing in the short term.
 - [ ] Add a stacking task to the environments
 - [ ] Fix the termination conditions
 - [ ] Make different versions that return different observations
