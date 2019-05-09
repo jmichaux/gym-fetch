@@ -7,7 +7,7 @@ These Fetch Robotics environments were originally developed by [Matthias Plapper
 The dependencies for these environments include [gym](https://github.com/openai/gym), [baselines](https://github.com/openai/baselines), and [mujoco-py](https://github.com/openai/mujoco-py).
 
 ### Intall Fetch Robotics Environments
-    ```bash
+    ```
     git clone https://github.com/jmichaux/gym-fetch.git
     cd baselines
     ```
