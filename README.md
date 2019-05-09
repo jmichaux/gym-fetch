@@ -17,7 +17,8 @@ Please visit the following links and be sure to install all of the dependencies:
 - [`baselines`](https://github.com/openai/baselines)
 - [`mujoco-py`](https://github.com/openai/mujoco-py)
 
-#### Intall `gym-fetch`
+
+### Intall `gym-fetch`
     git clone https://github.com/jmichaux/gym-fetch.git
     cd gym-fetch
     pip install -e .
