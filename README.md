@@ -25,10 +25,10 @@ The dependencies for these environments include [gym](https://github.com/openai/
 
 # To do
 This repository is stil a work in progress.  Here are a few things I plan on doing in the short term.
-- [ ] Add a stacking task to the environments
+- [ ] Add a stacking task
 - [ ] Fix the termination conditions
-- [ ] Make different versions that return different observations
-- [ ] Modify wrappers to better handle dictioanry observations 
+- [ ] Make different environment versions that return different observations
+- [ ] Modify wrappers to better handle dictionary observations 
 
 # Acknowledgements
 [@matthiasplappert](https://github.com/matthiasplappert) for developing the original Fetch robotics environments in OpenAI Gym. [@k-r-allen](https://github.com/k-r-allen) and [@tomsilver](https://github.com/tomsilver) for making the Hook environment.  [@machinaut](https://github.com/machinaut) and [@lilianweng](https://github.com/lilianweng) for giving me advice and helping me make some very important modifactions to the Fetch environments.
