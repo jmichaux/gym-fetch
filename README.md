@@ -7,6 +7,7 @@
     <td><img src="/assets/slide.gif?raw=true" width="200"></td>
   </tr>
 </table>
+
 These Fetch Robotics environments were originally developed by [Matthias Plappert](https://github.com/matthiasplappert) as part of the [OpenAI Gym](https://github.com/openai/gym/tree/master/gym/envs/robotics).  I modified them to give researchers and practioners a few more options with the kinds of experiments they might want to perform.
 
 ## Installation
