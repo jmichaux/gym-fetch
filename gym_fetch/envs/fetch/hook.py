@@ -6,7 +6,7 @@ https://github.com/k-r-allen/residual-policy-learning/blob/master/rpl_environmen
 import os
 import numpy as np
 from gym import utils, spaces
-from multimodal_envs.envs import fetch_env, rotations
+from gym_fetch.envs import fetch_env, rotations
 
 MODEL_XML_PATH = os.path.join('fetch', 'hook.xml')
 

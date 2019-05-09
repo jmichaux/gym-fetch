@@ -1,6 +1,6 @@
 import os
 from gym import utils
-from multimodal_envs.envs import fetch_env
+from gym_fetch.envs import fetch_env
 
 
 
