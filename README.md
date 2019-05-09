@@ -1,10 +1,22 @@
-# Fetch Gym Environments
+# Fetch Robotics Environments
 
-These Fetch Robotics environments were originally developed by Matthias Plappert at OpenAI.  I modified them to give researchers and practioners a few more options with the kinds of experiments they might want to perform.
+These Fetch Robotics environments were originally developed by [Matthias Plappert](https://github.com/matthiasplappert) as part of the [OpenAI Gym](https://github.com/openai/gym/tree/master/gym/envs/robotics).  I modified them to give researchers and practioners a few more options with the kinds of experiments they might want to perform.
 
+# Installation
+### Dependencies
+#### `Install gym`
+See the [OpenAI Gym repo] to ensure you have installed the dependencies for your OS. You can then install a minimal verison of gym with:
 
+.. code:: shell
 
-# Fetch Environments
+    pip install gym
+
+#### Install 
+
+### Install `mujoco-py`
+Follow the directions [here](https://github.com/openai/mujoco-py) to download the MuJoCo Physics engine
+
+### Intall Fetch Robotics Environments
 
 
 ## Reach
