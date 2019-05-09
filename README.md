@@ -2,25 +2,25 @@
 
 These Fetch Robotics environments were originally developed by [Matthias Plappert](https://github.com/matthiasplappert) as part of the [OpenAI Gym](https://github.com/openai/gym/tree/master/gym/envs/robotics).  I modified them to give researchers and practioners a few more options with the kinds of experiments they might want to perform.
 
-# Installation
+## Installation
 ### Dependencies
 The dependencies for these environments include [gym](https://github.com/openai/gym), [baselines](https://github.com/openai/baselines), and [mujoco-py](https://github.com/openai/mujoco-py).
 
-### Intall Fetch Robotics Environments
+#### Intall Fetch Robotics Environments
     git clone https://github.com/jmichaux/gym-fetch.git
     cd gym-fetch
     pip install -e .
 
-# Environments
-### Reach
+## Environments
+#### Reach
 
-### Push
+#### Push
 
-### Pick and Place
+#### Pick and Place
 
-### Slide
+#### Slide
 
-## Hook
+### Hook
 
 
 # TODO
