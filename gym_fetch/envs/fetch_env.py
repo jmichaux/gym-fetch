@@ -240,7 +240,7 @@ class FetchEnv(robot_env.RobotEnv):
 
     def _step_traj(self, ka):
         old_state = self.sim.get_state()
-        traj_qpos, traj_qvel, T_plan = gen_traj(ka,old_state.qpos,old_state.qvel)
+        traj_qpos, traj_qvel, T_plan = self.gen_traj(ka,old_state.qpos[7:-1],old_state.qvel[7:-1])
 
         for i in range(traj_qpos.shape[1]-1):
             # TO DO: action demension? and qpos demension?
@@ -263,19 +263,19 @@ class FetchEnv(robot_env.RobotEnv):
 
     def gen_traj(ka,q_0,q_dot_0,T_len=1000):
 
-    T = np.linspace(0,1,T_len+1)
-    T_plan = T[:int(T_len/2)]
-    #T_brake = T[int(T_len/2):]
+        T = np.linspace(0,1,T_len+1)
+        T_plan = T[:int(T_len/2)]
+        #T_brake = T[int(T_len/2):]
 
-    q_to_peak = q_0.reshape(-1,1) + np.outer(q_dot_0,T_plan) + .5*np.outer(ka,T_plan**2)
-    q_dot_to_peak = q_dot_0.reshape(-1,1) + np.outer(ka,T_plan)
+        q_to_peak = q_0.reshape(-1,1) + np.outer(q_dot_0,T_plan) + .5*np.outer(ka,T_plan**2)
+        q_dot_to_peak = q_dot_0.reshape(-1,1) + np.outer(ka,T_plan)
 
-    #q_peak = q_to_peak[:,-1]
-    #q_dot_peak = q_dot_to_peak[:,-1]
+        #q_peak = q_to_peak[:,-1]
+        #q_dot_peak = q_dot_to_peak[:,-1]
 
-           
-    #T_brake = T_brake - T_brake[0]
-    #q_to_stop = q_peak + q_dot_peak.*T_brake + (1/2)*((0 - q_dot_peak)./t_to_stop).*T_brake.^2
-    #q_dot_to_stop = q_dot_peak + ((0 - q_dot_peak)./t_to_stop).*T_brake
+            
+        #T_brake = T_brake - T_brake[0]
+        #q_to_stop = q_peak + q_dot_peak.*T_brake + (1/2)*((0 - q_dot_peak)./t_to_stop).*T_brake.^2
+        #q_dot_to_stop = q_dot_peak + ((0 - q_dot_peak)./t_to_stop).*T_brake
 
-    return q_to_peak, q_dot_to_peak, T_plan
+        return q_to_peak, q_dot_to_peak, T_plan
