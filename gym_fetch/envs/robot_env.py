@@ -5,7 +5,7 @@ import numpy as np
 import gym
 from gym import error, spaces
 from gym.utils import seeding
-
+from gym_fetch.envs import trajectory
 try:
     import mujoco_py
 except ImportError as e:
@@ -58,9 +58,11 @@ class RobotEnv(gym.GoalEnv):
 
     def step(self, action):
         action = np.clip(action, self.action_space.low, self.action_space.high)
-        self._set_action(action)
-        self.sim.step()
-        self._step_callback()
+        #self._set_action(action)
+        #self.sim.step()
+        #self._step_callback()
+        self._step_traj(action)
+        
         obs = self._get_obs()
         info = {}
         # info = self._get_other_obs()
@@ -196,3 +198,7 @@ class RobotEnv(gym.GoalEnv):
         environment-specific conditions (i.e. block falls of table).
         """
         raise NotImplementedError()
+
+    def _step_traj(self,ka):
+
+        pass
