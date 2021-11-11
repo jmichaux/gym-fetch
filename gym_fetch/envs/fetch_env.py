@@ -240,7 +240,7 @@ class FetchEnv(robot_env.RobotEnv):
 
     def _step_traj(self, ka):
         old_state = self.sim.get_state()
-        traj_qpos, traj_qvel, T_plan = self.gen_traj(ka,old_state.qpos[7:-1],old_state.qvel[7:-1])
+        traj_qpos, traj_qvel, T_plan = self.gen_traj(ka,old_state.qpos[6:-2],old_state.qvel[6:-2])
 
         for i in range(traj_qpos.shape[1]-1):
             # TO DO: action demension? and qpos demension?
@@ -248,8 +248,8 @@ class FetchEnv(robot_env.RobotEnv):
             
             new_qpos = np.copy(old_state.qpos)
             new_qvel = np.copy(old_state.qvel)
-            new_qpos[7:-1] = traj_qpos[:,i+1]
-            new_qvel[7:-1] = traj_qvel[:,i+1]
+            new_qpos[6:-2] = traj_qpos[:,i+1]
+            new_qvel[6:-2] = traj_qvel[:,i+1]
             t = T_plan[i+1]
             
             new_state = mujoco_py.MjSimState(
