@@ -282,15 +282,12 @@ class FetchEnv(robot_env.RobotEnv):
 
         return q_to_peak, q_dot_to_peak, T_plan
 
-        def step(self, action):
+    def step(self, action):
         # action = np.clip(action, self.action_space.low, self.action_space.high)
-        #TODO: set action space to 7 dim
         #self._set_action(action)
         #self.sim.step()
         #self._step_callback()
-        print('t')
         self._step_traj(action)
-        print('a')
         obs = self._get_obs()
         info = {}
         # info = self._get_other_obs()
