@@ -241,7 +241,7 @@ class FetchEnv(robot_env.RobotEnv):
     def _step_traj(self, ka):
         old_state = self.sim.get_state()
         traj_qpos, traj_qvel, T_plan = self.gen_traj(ka,old_state.qpos[6:-2],old_state.qvel[6:-2])
-
+        print('1')
         for i in range(traj_qpos.shape[1]-1):
             # TO DO: action demension? and qpos demension?
             #  figure out where rlsimulation is initiated?
@@ -261,6 +261,7 @@ class FetchEnv(robot_env.RobotEnv):
             #    break
             print(i)
             self.render() # might be wrong?
+        print('end')
 
     def gen_traj(ka,q_0,q_dot_0,T_len=1000):
 
