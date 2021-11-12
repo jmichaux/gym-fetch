@@ -46,7 +46,8 @@ def make_env(env_id, seed, rank, log_dir, obs_keys=None, allow_early_resets=Fals
             env = gym.make(env_id)
 
         if obs_keys is not None:
-            env = gym.wrappers.FlattenDictWrapper(env, dict_keys=obs_keys)
+            env = gym.wrappers.FlattenObservation(gym.wrappers.FilterObservation(env, obs_keys))
+            #env = gym.wrappers.FlattenDictWrapper(env, dict_keys=obs_keys)
 
         is_atari = hasattr(gym.envs, 'atari') and isinstance(
             env.unwrapped, gym.envs.atari.atari_env.AtariEnv)
