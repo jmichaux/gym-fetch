@@ -263,7 +263,7 @@ class FetchEnv(robot_env.RobotEnv):
             self.render() # might be wrong?
         print('end')
 
-    def gen_traj(ka,q_0,q_dot_0,T_len=1000):
+    def gen_traj(self,ka,q_0,q_dot_0,T_len=1000):
 
         T = np.linspace(0,1,T_len+1)
         T_plan = T[:int(T_len/2)]
@@ -281,3 +281,37 @@ class FetchEnv(robot_env.RobotEnv):
         #q_dot_to_stop = q_dot_peak + ((0 - q_dot_peak)./t_to_stop).*T_brake
 
         return q_to_peak, q_dot_to_peak, T_plan
+
+        def step(self, action):
+        # action = np.clip(action, self.action_space.low, self.action_space.high)
+        #TODO: set action space to 7 dim
+        #self._set_action(action)
+        #self.sim.step()
+        #self._step_callback()
+        print('t')
+        self._step_traj(action)
+        print('a')
+        obs = self._get_obs()
+        info = {}
+        # info = self._get_other_obs()
+        info['is_success'] = self._is_success(obs['achieved_goal'], self.goal)
+        # never terminate
+        if not self.terminate_success and not self.terminate_fail:
+            done = False
+        # only terminate if successfuly reach goal
+        elif self.terminate_success and not self.terminate_fail:
+            if info['is_success']:
+                done = True
+            else:
+                done = False
+        # only terminate on failures
+        elif self.terminate_fail and not self.terminate_success:
+            done = self._check_done(obs)
+        # terminate on successes and failures
+        else:
+            if info['is_success']:
+                done = True
+            else:
+                done = self._check_done(obs)
+        reward = self.compute_reward(obs['achieved_goal'], self.goal, info)
+        return obs, reward, done, info

@@ -58,12 +58,10 @@ class RobotEnv(gym.GoalEnv):
 
     def step(self, action):
         action = np.clip(action, self.action_space.low, self.action_space.high)
-        #self._set_action(action)
-        #self.sim.step()
-        #self._step_callback()
-        print('t')
-        self._step_traj(action)
-        print('a')
+        self._set_action(action)
+        self.sim.step()
+        self._step_callback()
+
         obs = self._get_obs()
         info = {}
         # info = self._get_other_obs()
