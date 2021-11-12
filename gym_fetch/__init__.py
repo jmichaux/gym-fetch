@@ -1,11 +1,14 @@
 from gym.envs.registration import register
 
 # register trajectory Fetch
+kwargs = {  'reward_type': 'dense',
+            'terminate_success': False,
+            'terminate_fail': False,
+            }
 register(id='FetchTraj-v0',
-    entry_point='gym_fetch.envs.fetch:FetchTrajReachEnv',
-    max_episode_steps=200,
-    reward_threshold=195.0,
-    )
+    entry_point='gym_fetch.envs:FetchTrajReachEnv',
+    max_episode_steps=200, reward_threshold=195.0, kwargs=kwargs,
+)
 
 
 # Standard Environments
