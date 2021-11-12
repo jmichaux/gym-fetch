@@ -5,7 +5,7 @@ import mujoco_py
 
 env = gym.make('FetchReach-v1')
 env.reset()
-for _ in range(30):
+for _ in range(1):
     env.render()
     env.step(env.action_space.sample())
 

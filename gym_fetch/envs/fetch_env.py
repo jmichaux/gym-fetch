@@ -259,6 +259,7 @@ class FetchEnv(robot_env.RobotEnv):
             self.sim.forward()
             #if i == traj_qpos.shape[1]-2:
             #    break
+            print(i)
             self.render() # might be wrong?
 
     def gen_traj(ka,q_0,q_dot_0,T_len=1000):
