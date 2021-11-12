@@ -7,7 +7,7 @@ kwargs = {  'reward_type': 'dense',
             }
 register(id='FetchTraj-v0',
     entry_point='gym_fetch.envs:FetchTrajReachEnv',
-    max_episode_steps=200, reward_threshold=195.0, kwargs=kwargs,
+    max_episode_steps=200, reward_threshold=195.0, #kwargs=kwargs,
 )
 
 

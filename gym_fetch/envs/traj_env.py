@@ -1,4 +1,5 @@
 import numpy as np
+import mujoco_py
 
 from gym.envs.robotics import rotations, robot_env, utils
 
@@ -51,7 +52,7 @@ class FetchTrajEnv(robot_env.RobotEnv):
         self.distance_threshold = distance_threshold
         self.reward_type = reward_type
 
-        super(FetchEnv, self).__init__(
+        super(FetchTrajEnv, self).__init__(
             model_path=model_path,
             n_substeps=n_substeps,
             n_actions=4,
@@ -226,7 +227,7 @@ class FetchTrajEnv(robot_env.RobotEnv):
             self.height_offset = self.sim.data.get_site_xpos("object0")[2]
 
     def render(self, mode="human", width=500, height=500):
-        return super(FetchEnv, self).render(mode, width, height)
+        return super(FetchTrajEnv, self).render(mode, width, height)
 
 
     def _step_traj(self, ka):
