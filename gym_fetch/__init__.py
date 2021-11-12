@@ -1,5 +1,10 @@
 from gym.envs.registration import register
 
+# register trajectory Fetch
+register(id='FetchTraj-v0',
+    entry_point='gym_fetch.envs:FetchTrajEnv')
+
+
 # Standard Environments
 for reward_type in ['dense', 'sparse', 'very_sparse']:
     if reward_type == 'dense':
