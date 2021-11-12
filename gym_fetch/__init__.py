@@ -2,7 +2,10 @@ from gym.envs.registration import register
 
 # register trajectory Fetch
 register(id='FetchTraj-v0',
-    entry_point='gym_fetch.envs:FetchTrajEnv')
+    entry_point='gym_fetch.envs.fetch:FetchTrajReachEnv',
+    max_episode_steps=200,
+    reward_threshold=195.0,
+    )
 
 
 # Standard Environments
