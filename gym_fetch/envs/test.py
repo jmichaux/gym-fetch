@@ -1,10 +1,9 @@
 import numpy as np
-import gym_fetch
+import gym
 
-import mujoco_py
 
 #env = gym.make('FetchReach-v1')
-env = gym_fetch.make('FetchReachSparse-v3')
+env = gym.make('NEWNAME')
 
 env.reset()
 for _ in range(1):
