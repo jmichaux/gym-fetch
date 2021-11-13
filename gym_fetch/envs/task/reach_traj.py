@@ -14,7 +14,7 @@ class FetchTrajReachEnv(traj_env.FetchTrajEnv, utils.EzPickle):
             "robot0:slide1": 0.48,
             "robot0:slide2": 0.0,
         }
-        fetch_env.FetchEnv.__init__(
+        traj_env.FetchTrajEnv.__init__(
             self,
             MODEL_XML_PATH,
             has_object=False,

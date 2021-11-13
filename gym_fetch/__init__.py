@@ -3,11 +3,11 @@ from gym.envs.registration import (
     register,
     make,
     spec,
-    load_env_plugins as _load_env_plugins,
+#    load_env_plugins as _load_env_plugins,
 )
 
 # Hook to load plugins from entry points
-_load_env_plugins()
+#_load_env_plugins()
 
 
 for reward_type in ["sparse", "dense"]:
