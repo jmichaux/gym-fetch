@@ -54,7 +54,7 @@ class FetchTrajEnv(robot_env.RobotEnv):
         super(FetchTrajEnv, self).__init__(
             model_path=model_path,
             n_substeps=n_substeps,
-            n_actions=4,
+            n_actions=7,
             initial_qpos=initial_qpos,
         )
 
