@@ -1,5 +1,5 @@
 import numpy as np
-
+import mujoco_py
 from gym.envs.robotics import rotations, robot_env, utils
 
 
