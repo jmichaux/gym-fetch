@@ -55,8 +55,8 @@ class ReacherTrajEnv(mujoco_env.MujocoEnv, utils.EzPickle):
     def step(self, a):
         vec = self.get_body_com("fingertip") - self.get_body_com("target")
         reward_dist = -np.linalg.norm(vec)
-        #reward_ctrl = -np.square(a).sum()
-        #reward = reward_dist + reward_ctrl
+        reward_ctrl = -np.square(a).sum()
+        reward = reward_dist + reward_ctrl
         #self.do_simulation(a, self.frame_skip)
         self._step_traj(a)
         ob = self._get_obs()
