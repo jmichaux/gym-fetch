@@ -5,7 +5,7 @@ import gym
 #env = gym.make('FetchReach-v1')
 #env = gym.make('FetchTraj-v0')
 
-env = gym.make('gym_mujoco:ReacherTrajEnv-v2')
+env = gym.make('gym_mujoco:ReacherTraj-v2')
 
 env.reset()
 for _ in range(10):

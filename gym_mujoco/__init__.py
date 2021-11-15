@@ -18,18 +18,4 @@ register(
     reward_threshold=-3.75,
 )
 
-for reward_type in ["sparse", "dense"]:
-    suffix = "Dense" if reward_type == "dense" else ""
-    kwargs = {
-        "reward_type": reward_type,
-    }
-
-    # Fetch
-    register(
-        id="FetchTrajReach{}-v1".format(suffix),
-        entry_point="gym_fetch.envs:FetchTrajReachEnv",
-        kwargs=kwargs,
-        max_episode_steps=50,
-    )
-
 
