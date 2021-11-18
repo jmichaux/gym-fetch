@@ -8,30 +8,28 @@ class ReacherTrajEnv(mujoco_env.MujocoEnv, utils.EzPickle):
         utils.EzPickle.__init__(self)
         mujoco_env.MujocoEnv.__init__(self, "reacher.xml", 2)
 
-
-
-
-    def _step_traj(self, ka):
+    def _step_traj(self, ka, render_flag = 0):
         old_state = self.sim.get_state()
         traj_qpos, traj_qvel, T_plan = self.gen_traj(ka,old_state.qpos[:2],old_state.qvel[:2])
-        for i in range(traj_qpos.shape[1]-1):
-            # TO DO: action demension? and qpos demension?
-            #  figure out where rlsimulation is initiated?
-            
-            new_qpos = np.copy(old_state.qpos)
-            new_qvel = np.copy(old_state.qvel)
-            new_qpos[:2] = traj_qpos[:,i+1]
-            new_qvel[:2] = traj_qvel[:,i+1]
-            t = T_plan[i+1]
-            
-            new_state = mujoco_py.MjSimState(
-                old_state.time+t, new_qpos, new_qvel, old_state.act, old_state.udd_state
-            )
-            self.sim.set_state(new_state)
-            self.sim.forward()
-            #if i == traj_qpos.shape[1]-2:
-            #    break
-            self.render() # might be wrong?
+        if render_flag == 1:
+            for i in range(traj_qpos.shape[1]-1):
+                # TO DO: action demension? and qpos demension?
+                #  figure out where rlsimulation is initiated?
+                
+                new_qpos = np.copy(old_state.qpos)
+                new_qvel = np.copy(old_state.qvel)
+                new_qpos[:2] = traj_qpos[:,i+1]
+                new_qvel[:2] = traj_qvel[:,i+1]
+                t = T_plan[i+1]
+                
+                new_state = mujoco_py.MjSimState(
+                    old_state.time+t, new_qpos, new_qvel, old_state.act, old_state.udd_state
+                )
+                self.sim.set_state(new_state)
+                self.sim.forward()
+                #if i == traj_qpos.shape[1]-2:
+                #    break
+                self.render() # might be wrong?
 
     def gen_traj(self,ka,q_0,q_dot_0,T_len=20):
 
@@ -52,13 +50,13 @@ class ReacherTrajEnv(mujoco_env.MujocoEnv, utils.EzPickle):
 
         return q_to_peak, q_dot_to_peak, T_plan
 
-    def step(self, a):
+    def step(self, a,render_flag = 0):
         vec = self.get_body_com("fingertip") - self.get_body_com("target")
         reward_dist = -np.linalg.norm(vec)
         reward_ctrl = -np.square(a).sum()
         reward = reward_dist + reward_ctrl
         #self.do_simulation(a, self.frame_skip)
-        self._step_traj(a)
+        self._step_traj(a,render_flag)
         ob = self._get_obs()
         done = False
         return ob, reward, done, dict(reward_dist=reward_dist, reward_ctrl=reward_ctrl)

@@ -229,27 +229,28 @@ class FetchTrajEnv(robot_env.RobotEnv):
         return super(FetchTrajEnv, self).render(mode, width, height)
 
 
-    def _step_traj(self, ka):
+    def _step_traj(self, ka, render_flag = 0):
         old_state = self.sim.get_state()
         traj_qpos, traj_qvel, T_plan = self.gen_traj(ka,old_state.qpos[6:-2],old_state.qvel[6:-2])
-        for i in range(traj_qpos.shape[1]-1):
-            # TO DO: action demension? and qpos demension?
-            #  figure out where rlsimulation is initiated?
-            
-            new_qpos = np.copy(old_state.qpos)
-            new_qvel = np.copy(old_state.qvel)
-            new_qpos[6:-2] = traj_qpos[:,i+1]
-            new_qvel[6:-2] = traj_qvel[:,i+1]
-            t = T_plan[i+1]
-            
-            new_state = mujoco_py.MjSimState(
-                old_state.time+t, new_qpos, new_qvel, old_state.act, old_state.udd_state
-            )
-            self.sim.set_state(new_state)
-            self.sim.forward()
-            #if i == traj_qpos.shape[1]-2:
-            #    break
-            self.render() # might be wrong?
+        if render_flag == 1:
+            for i in range(traj_qpos.shape[1]-1):
+                # TO DO: action demension? and qpos demension?
+                #  figure out where rlsimulation is initiated?
+                
+                new_qpos = np.copy(old_state.qpos)
+                new_qvel = np.copy(old_state.qvel)
+                new_qpos[6:-2] = traj_qpos[:,i+1]
+                new_qvel[6:-2] = traj_qvel[:,i+1]
+                t = T_plan[i+1]
+                
+                new_state = mujoco_py.MjSimState(
+                    old_state.time+t, new_qpos, new_qvel, old_state.act, old_state.udd_state
+                )
+                self.sim.set_state(new_state)
+                self.sim.forward()
+                #if i == traj_qpos.shape[1]-2:
+                #    break
+                self.render() # might be wrong?
 
     def gen_traj(self,ka,q_0,q_dot_0,T_len=20):
 
@@ -270,12 +271,12 @@ class FetchTrajEnv(robot_env.RobotEnv):
 
         return q_to_peak, q_dot_to_peak, T_plan
 
-    def step(self, action):
+    def step(self, action,render_flag = 0):
         #action = np.clip(action, self.action_space.low, self.action_space.high)
         #self._set_action(action)
         #self.sim.step()
         #self._step_callback()
-        self._step_traj(action)
+        self._step_traj(action,render_flag)
         obs = self._get_obs()
 
         done = False
