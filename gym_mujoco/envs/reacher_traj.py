@@ -9,7 +9,7 @@ class ReacherTrajEnv(mujoco_env.MujocoEnv, utils.EzPickle):
         mujoco_env.MujocoEnv.__init__(self, "reacher.xml", 2)
 
     def _step_traj(self, ka):
-        t = 0.01 #following the original timestamp of gym reacher2d
+        t = 0.5 #following the original timestamp of gym reacher2d
         old_state = self.sim.get_state()
         qpos = old_state.qpos[:2]
         qvel = old_state.qvel[:2]
