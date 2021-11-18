@@ -1,6 +1,5 @@
 import numpy as np
 import mujoco_py
-
 from gym.envs.robotics import rotations, robot_env, utils
 
 
@@ -55,7 +54,7 @@ class FetchTrajEnv(robot_env.RobotEnv):
         super(FetchTrajEnv, self).__init__(
             model_path=model_path,
             n_substeps=n_substeps,
-            n_actions=4,
+            n_actions=7,
             initial_qpos=initial_qpos,
         )
 
@@ -230,29 +229,30 @@ class FetchTrajEnv(robot_env.RobotEnv):
         return super(FetchTrajEnv, self).render(mode, width, height)
 
 
-    def _step_traj(self, ka):
+    def _step_traj(self, ka, render_flag = 0):
         old_state = self.sim.get_state()
         traj_qpos, traj_qvel, T_plan = self.gen_traj(ka,old_state.qpos[6:-2],old_state.qvel[6:-2])
-        for i in range(traj_qpos.shape[1]-1):
-            # TO DO: action demension? and qpos demension?
-            #  figure out where rlsimulation is initiated?
-            
-            new_qpos = np.copy(old_state.qpos)
-            new_qvel = np.copy(old_state.qvel)
-            new_qpos[6:-2] = traj_qpos[:,i+1]
-            new_qvel[6:-2] = traj_qvel[:,i+1]
-            t = T_plan[i+1]
-            
-            new_state = mujoco_py.MjSimState(
-                old_state.time+t, new_qpos, new_qvel, old_state.act, old_state.udd_state
-            )
-            self.sim.set_state(new_state)
-            self.sim.forward()
-            #if i == traj_qpos.shape[1]-2:
-            #    break
-            self.render() # might be wrong?
+        if render_flag == 1:
+            for i in range(traj_qpos.shape[1]-1):
+                # TO DO: action demension? and qpos demension?
+                #  figure out where rlsimulation is initiated?
+                
+                new_qpos = np.copy(old_state.qpos)
+                new_qvel = np.copy(old_state.qvel)
+                new_qpos[6:-2] = traj_qpos[:,i+1]
+                new_qvel[6:-2] = traj_qvel[:,i+1]
+                t = T_plan[i+1]
+                
+                new_state = mujoco_py.MjSimState(
+                    old_state.time+t, new_qpos, new_qvel, old_state.act, old_state.udd_state
+                )
+                self.sim.set_state(new_state)
+                self.sim.forward()
+                #if i == traj_qpos.shape[1]-2:
+                #    break
+                self.render() # might be wrong?
 
-    def gen_traj(self,ka,q_0,q_dot_0,T_len=1000):
+    def gen_traj(self,ka,q_0,q_dot_0,T_len=20):
 
         T = np.linspace(0,1,T_len+1)
         T_plan = T[:int(T_len/2)]
@@ -271,35 +271,19 @@ class FetchTrajEnv(robot_env.RobotEnv):
 
         return q_to_peak, q_dot_to_peak, T_plan
 
-    def step(self, action):
-        # action = np.clip(action, self.action_space.low, self.action_space.high)
+    def step(self, action,render_flag = 0):
+        #action = np.clip(action, self.action_space.low, self.action_space.high)
         #self._set_action(action)
         #self.sim.step()
         #self._step_callback()
-        self._step_traj(action)
+        self._step_traj(action,render_flag)
         obs = self._get_obs()
-        info = {}
-        # info = self._get_other_obs()
-        info['is_success'] = self._is_success(obs['achieved_goal'], self.goal)
-        # never terminate
-        if not self.terminate_success and not self.terminate_fail:
-            done = False
-        # only terminate if successfuly reach goal
-        elif self.terminate_success and not self.terminate_fail:
-            if info['is_success']:
-                done = True
-            else:
-                done = False
-        # only terminate on failures
-        elif self.terminate_fail and not self.terminate_success:
-            done = self._check_done(obs)
-        # terminate on successes and failures
-        else:
-            if info['is_success']:
-                done = True
-            else:
-                done = self._check_done(obs)
-        reward = self.compute_reward(obs['achieved_goal'], self.goal, info)
+
+        done = False
+        info = {
+            "is_success": self._is_success(obs["achieved_goal"], self.goal),
+        }
+        reward = self.compute_reward(obs["achieved_goal"], self.goal, info)
         return obs, reward, done, info
 
 
