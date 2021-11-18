@@ -8,28 +8,48 @@ class ReacherTrajEnv(mujoco_env.MujocoEnv, utils.EzPickle):
         utils.EzPickle.__init__(self)
         mujoco_env.MujocoEnv.__init__(self, "reacher.xml", 2)
 
-    def _step_traj(self, ka, render_flag = 0):
+    def _step_traj(self, ka):
+        t = 0.01 #following the original timestamp of gym reacher2d
+        old_state = self.sim.get_state()
+        qpos = old_state.qpos[:2]
+        qvel = old_state.qvel[:2]
+        new_qpos = np.copy(old_state.qpos)
+        new_qvel = np.copy(old_state.qvel)
+        ka = np.array(ka).reshape(qpos.shape)
+        new_qpos[:2] = qpos + qvel * t + (0.5 * ka * t ** 2)
+        new_qvel[:2] = qvel + ka * t
+        print(new_qpos)
+        print(new_qvel)
+        new_state = mujoco_py.MjSimState(
+            old_state.time + t, new_qpos, new_qvel, old_state.act, old_state.udd_state
+        )
+        self.sim.set_state(new_state)
+        self.sim.forward()
+
+        '''
         old_state = self.sim.get_state()
         traj_qpos, traj_qvel, T_plan = self.gen_traj(ka,old_state.qpos[:2],old_state.qvel[:2])
-        if render_flag == 1:
-            for i in range(traj_qpos.shape[1]-1):
-                # TO DO: action demension? and qpos demension?
-                #  figure out where rlsimulation is initiated?
-                
-                new_qpos = np.copy(old_state.qpos)
-                new_qvel = np.copy(old_state.qvel)
-                new_qpos[:2] = traj_qpos[:,i+1]
-                new_qvel[:2] = traj_qvel[:,i+1]
-                t = T_plan[i+1]
-                
-                new_state = mujoco_py.MjSimState(
-                    old_state.time+t, new_qpos, new_qvel, old_state.act, old_state.udd_state
-                )
-                self.sim.set_state(new_state)
-                self.sim.forward()
-                #if i == traj_qpos.shape[1]-2:
-                #    break
-                self.render() # might be wrong?
+        
+        
+        for i in range(traj_qpos.shape[1] - 1):
+            # TO DO: action demension? and qpos demension?
+            #  figure out where rlsimulation is initiated?
+
+            new_qpos = np.copy(old_state.qpos)
+            new_qvel = np.copy(old_state.qvel)
+            new_qpos[:2] = traj_qpos[:, i + 1]
+            new_qvel[:2] = traj_qvel[:, i + 1]
+            t = T_plan[i + 1]
+
+            new_state = mujoco_py.MjSimState(
+                old_state.time + t, new_qpos, new_qvel, old_state.act, old_state.udd_state
+            )
+            self.sim.set_state(new_state)
+            self.sim.forward()
+            # if i == traj_qpos.shape[1]-2:
+            #    break
+        '''
+
 
     def gen_traj(self,ka,q_0,q_dot_0,T_len=20):
 
@@ -56,7 +76,7 @@ class ReacherTrajEnv(mujoco_env.MujocoEnv, utils.EzPickle):
         reward_ctrl = -np.square(a).sum()
         reward = reward_dist + reward_ctrl
         #self.do_simulation(a, self.frame_skip)
-        self._step_traj(a,render_flag)
+        self._step_traj(a)
         ob = self._get_obs()
         done = False
         return ob, reward, done, dict(reward_dist=reward_dist, reward_ctrl=reward_ctrl)

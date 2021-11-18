@@ -1,14 +1,10 @@
 import numpy as np
 import gym
 
-
-#env = gym.make('FetchReach-v1')
-#env = gym.make('FetchTraj-v0')
-
 env = gym.make('gym_fetch:FetchTrajReach-v1')
 
 env.reset()
-for _ in range(10):
+for _ in range(100):
     env.render()
     env.step(env.action_space.sample())
 
