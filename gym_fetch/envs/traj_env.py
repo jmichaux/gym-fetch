@@ -231,16 +231,14 @@ class FetchTrajEnv(robot_env.RobotEnv):
 
     def _step_traj(self, ka, render_flag = 0):
         old_state = self.sim.get_state()
-        traj_qpos, traj_qvel, T_plan = self.gen_traj(ka,old_state.qpos[6:-2],old_state.qvel[6:-2])
         if render_flag == 1:
+            traj_qpos, traj_qvel, T_plan = self.gen_traj(ka,old_state.qpos[:2],old_state.qvel[:2],20)
             for i in range(traj_qpos.shape[1]-1):
-                # TO DO: action demension? and qpos demension?
-                #  figure out where rlsimulation is initiated?
                 
                 new_qpos = np.copy(old_state.qpos)
                 new_qvel = np.copy(old_state.qvel)
-                new_qpos[6:-2] = traj_qpos[:,i+1]
-                new_qvel[6:-2] = traj_qvel[:,i+1]
+                new_qpos[:2] = traj_qpos[:,i+1]
+                new_qvel[:2] = traj_qvel[:,i+1]
                 t = T_plan[i+1]
                 
                 new_state = mujoco_py.MjSimState(
@@ -250,12 +248,26 @@ class FetchTrajEnv(robot_env.RobotEnv):
                 self.sim.forward()
                 #if i == traj_qpos.shape[1]-2:
                 #    break
-                self.render() # might be wrong?
+                self.render() 
+        else:
+            traj_qpos, traj_qvel, T_plan = self.gen_traj(ka,old_state.qpos[:2],old_state.qvel[:2],2)
+
+            new_qpos = np.copy(old_state.qpos)
+            new_qvel = np.copy(old_state.qvel)
+            new_qpos[:2] = traj_qpos[:,-1]
+            new_qvel[:2] = traj_qvel[:,-1]
+            t = T_plan[-1]
+
+            new_state = mujoco_py.MjSimState(
+                old_state.time+t, new_qpos, new_qvel, old_state.act, old_state.udd_state
+            )
+            self.sim.set_state(new_state)
+            self.sim.forward()
 
     def gen_traj(self,ka,q_0,q_dot_0,T_len=20):
 
         T = np.linspace(0,1,T_len+1)
-        T_plan = T[:int(T_len/2)]
+        T_plan = T[:int(T_len/2)+1]
         #T_brake = T[int(T_len/2):]
 
         q_to_peak = q_0.reshape(-1,1) + np.outer(q_dot_0,T_plan) + .5*np.outer(ka,T_plan**2)
