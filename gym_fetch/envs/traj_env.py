@@ -295,9 +295,9 @@ class FetchTrajEnv(robot_env_rlkit.RobotEnvRlkit):
 
         done = False
         info = {
-            "is_success": self._is_success(obs["achieved_goal"], self.goal),
+            "is_success": self._is_success(obs[3:6], self.goal),
         }
-        reward = self.compute_reward(obs["achieved_goal"], self.goal, info)
+        reward = self.compute_reward(obs[3:6], self.goal, info)
         return obs, reward, done, info
 
 
