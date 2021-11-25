@@ -1,14 +1,16 @@
+from operator import concat
+from typing_extensions import Concatenate
 import numpy as np
 import mujoco_py
 from gym.envs.robotics import rotations, robot_env, utils
-
+from gym_fetch.envs import robot_env_rlkit
 
 def goal_distance(goal_a, goal_b):
     assert goal_a.shape == goal_b.shape
     return np.linalg.norm(goal_a - goal_b, axis=-1)
 
 
-class FetchTrajEnv(robot_env.RobotEnv):
+class FetchTrajEnv(robot_env_rlkit.RobotEnvRlkit):
     """Superclass for all Fetch environments."""
 
     def __init__(
@@ -57,19 +59,6 @@ class FetchTrajEnv(robot_env.RobotEnv):
             n_actions=7,
             initial_qpos=initial_qpos,
         )
-
-        # to be compatible to rlkit
-        self.observation_space.low = np.concatenate(
-            (self.observation_space["desired_goal"].low,
-            self.observation_space["achieved_goal"].low,
-            self.observation_space["observation"].low))
-
-        self.observation_space.high = np.concatenate(
-            (self.observation_space["desired_goal"].high,
-            self.observation_space["achieved_goal"].high,
-            self.observation_space["observation"].high))
-
-
 
 
     # GoalEnv methods
@@ -158,12 +147,13 @@ class FetchTrajEnv(robot_env.RobotEnv):
                 gripper_vel,
             ]
         )
+        # fix observation from dict to ndarray
+        return np.concatenate([
+            self.goal.copy(),
+            achieved_goal.copy(),
+            obs.copy()
+        ])
 
-        return {
-            "observation": obs.copy(),
-            "achieved_goal": achieved_goal.copy(),
-            "desired_goal": self.goal.copy(),
-        }
 
     def _viewer_setup(self):
         body_id = self.sim.model.body_name2id("robot0:gripper_link")
