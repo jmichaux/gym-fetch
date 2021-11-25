@@ -69,19 +69,7 @@ class FetchTrajEnv(robot_env.RobotEnv):
             self.observation_space["achieved_goal"].high,
             self.observation_space["observation"].high))
 
-        self.observation_space = spaces.Dict(
-            dict(
-                desired_goal=spaces.Box(
-                    -np.inf, np.inf, shape=obs["achieved_goal"].shape, dtype="float32"
-                ),
-                achieved_goal=spaces.Box(
-                    -np.inf, np.inf, shape=obs["achieved_goal"].shape, dtype="float32"
-                ),
-                observation=spaces.Box(
-                    -np.inf, np.inf, shape=obs["observation"].shape, dtype="float32"
-                ),
-            )
-        )
+
 
 
     # GoalEnv methods
