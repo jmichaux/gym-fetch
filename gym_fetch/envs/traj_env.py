@@ -271,7 +271,7 @@ class FetchTrajEnv(robot_env_rlkit.RobotEnvRlkit):
         T = np.linspace(0,1,T_len+1)
         T_plan = T[:int(T_len/2)+1]
         #T_brake = T[int(T_len/2):]
-
+        import pudb; pudb.set_trace()
         q_to_peak = q_0.reshape(-1,1) + np.outer(q_dot_0,T_plan) + .5*np.outer(ka,T_plan**2)
         q_dot_to_peak = q_dot_0.reshape(-1,1) + np.outer(ka,T_plan)
 
