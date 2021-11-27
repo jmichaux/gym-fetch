@@ -1,1 +1,2 @@
 from gym_mujoco.envs.reacher_traj import ReacherTrajEnv
+from gym_mujoco.envs.reacher_traj_obs import ReacherTrajObsEnv

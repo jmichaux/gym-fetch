@@ -17,5 +17,10 @@ register(
     max_episode_steps=50,
     reward_threshold=-3.75,
 )
-
+register(
+    id="ReacherTrajObs-v2",
+    entry_point="gym_mujoco.envs:ReacherTrajObsEnv",
+    max_episode_steps=50,
+    reward_threshold=-3.75,
+)
 
