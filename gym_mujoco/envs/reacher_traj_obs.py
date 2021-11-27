@@ -3,7 +3,7 @@ from gym import utils
 from gym.envs.mujoco import mujoco_env
 import mujoco_py
 
-class ReacherTrajEnv(mujoco_env.MujocoEnv, utils.EzPickle):
+class ReacherTrajObsEnv(mujoco_env.MujocoEnv, utils.EzPickle):
     def __init__(self):
         utils.EzPickle.__init__(self)
         mujoco_env.MujocoEnv.__init__(self, "reacher_obs.xml", 2)
